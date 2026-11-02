@@ -20,7 +20,7 @@ The accompanying laboratory report provides additional context on the experiment
 
 The experimental data is fitted to a logistic function:
 
-$ N(t) = \frac{12}{1 + e^{-k(t - t_{50})}} $
+#### $N(t) = \dfrac{12}{1 + e^{-k(t - t_{50})}}$
 
 Where:
 * N(t) — Predicted number of floating leaf disks at time t

@@ -4,94 +4,111 @@ A computational biology project that uses nonlinear regression to model photosyn
 
 ## Overview
 
-Light wavelength influences photosynthetic activity because photosynthetic pigments absorb different wavelengths with varying efficiencies. This project investigates how light colour affects the rate at which leaf disks float during a photosynthesis assay.
+Photosynthetic pigments absorb different wavelengths of light with varying efficiencies, so light colour affects photosynthetic activity. This project analyses a floating leaf disk assay, where disks rise as photosynthesis produces oxygen, to compare how quickly disks float under different light colours.
 
-Using Python, experimental floating leaf disk data is fitted to a logistic growth model to estimate photosynthetic response kinetics, calculate the time required for 50% of disks to float (ET50), and compare model performance across different light conditions.
+Experimental data is fitted to a logistic growth model to:
 
-## Experimental Background
+- estimate the logistic rate parameter $k$ for each light colour
+- calculate $t_{50}$, the time for 50% of disks to float (also called ET50)
+- compare model performance across light conditions
 
-This computational analysis builds upon a laboratory investigation of photosynthetic activity under different light wavelengths. The original experiment used a floating leaf disk assay to estimate relative photosynthetic activity.
+[Read the full lab report](reports/photosynthesis_lab_report.pdf) for the experimental methodology, observations, and biological interpretation.
 
-The accompanying laboratory report provides additional context on the experimental methodology, observations, and biological interpretation.
+## Results
 
-[Read the Full Lab Report](reports/photosynthesis_lab_report.pdf)
+![Comparison of fitted curves across light colours](images/comparison.png)
+*Fitted logistic curves for each light colour.*
+
+![Logistic fit for red light](images/red_fit.png)
+*Observed floating disk counts, fitted curve, and $t_{50}$ marker for red light.*
+
+| Light | k (min⁻¹) | t₅₀ (min) | RMSE (disks) | R² |
+|-------|-----------|-----------|--------------|-----|
+| Red   | _0.551_    | _9.9_    | _0.595_       | _0.982_ |
+| Green  | _0.343_    | _12.97_    | _0.501_       | _0.985_ |
+| Blue | _0.274_    | _18.28_    | _0.438_       | _0.988_ |
+
+
+The table is generated in `photosynthesis_comparison.csv` when the multi-colour analysis runs.
 
 ## Mathematical Model
 
-The experimental data is fitted to a logistic function:
+Floating disk counts are fitted to a logistic function:
 
 #### $N(t) = \dfrac{12}{1 + e^{-k(t - t_{50})}}$
 
-Where:
-* N(t) — Predicted number of floating leaf disks at time t
-* 12 — Total number of leaf disks in the assay
-* k — Logistic growth rate parameter (min⁻¹)
-* t50 — Estimated time at which 50% of disks are floating (minutes)
+where:
 
-The model parameters are estimated using nonlinear least-squares regression with SciPy's curve_fit().
+- $N(t)$: predicted number of floating leaf disks at time $t$
+- $12$: total number of leaf disks in the assay (the upper asymptote)
+- $k$: logistic rate parameter (min⁻¹); larger values mean a steeper rise
+- $t_{50}$: time at which $N(t) = 6$, i.e. 50% of disks are floating (minutes)
 
-## Model Evaluation
+Parameters are estimated with nonlinear least squares using SciPy's `curve_fit()`.
 
-Two metrics are used to evaluate goodness of fit:
+### Model evaluation
 
-### Root Mean Squared Error (RMSE)
+Goodness of fit is assessed with two metrics:
 
-Measures the average magnitude of prediction errors, expressed in floating disks. Lower values indicate a closer fit.
+$$
+\text{RMSE} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}
+\qquad
+R^2 = 1 - \frac{\sum_{i}(y_i - \hat{y}_i)^2}{\sum_{i}(y_i - \bar{y})^2}
+$$
 
-### Coefficient of Determination (R²)
-
-Measures how well the fitted model accounts for variation in the observed floating disk counts. Values closer to 1 generally indicate a better fit.
+- **RMSE** is the average prediction error in floating disks. Lower is better.
+- **R²** is the proportion of variation in the observed counts explained by the model. Values closer to 1 indicate a better fit.
 
 ## Features
 
-* Import and process experimental data from CSV files using Pandas
-* Fit logistic growth curves using SciPy
-* Estimate ET50 and logistic rate parameters for each light colour
-* Calculate RMSE and R² to evaluate model fit
-* Visualize experimental observations alongside fitted curves using Matplotlib
-* Compare photosynthetic responses across multiple light conditions
-* Generate formatted comparison tables using Tabulate
-* Export model results to CSV for further analysis
+- Import and process experimental data from CSV files with Pandas
+- Fit logistic curves and estimate $k$ and $t_{50}$ for each light colour with SciPy
+- Evaluate fits with RMSE and R²
+- Plot observations alongside fitted curves with Matplotlib, for one colour or several
+- Print formatted comparison tables with Tabulate
+- Export model results to CSV for further analysis
 
-## Results and Visualizations
-<img width="1000" height="600" alt="Multiple colour analysis" src="https://github.com/user-attachments/assets/c9696ddd-cd2b-40f8-ba01-c4ebb3e4d70a" />
-<img width="1000" height="600" alt="Analysis of Red" src="https://github.com/user-attachments/assets/c47a97cd-3934-4f70-a7dc-ff9bdd28bdd1" />
+## Getting Started
 
-## Technologies Used
-<table>
-  <thead>
-    <tr>
-      <th>Library</th>
-      <th>Purpose</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Python</td>
-      <td>Primary coding language</td>
-    </tr>
-    <tr>
-      <td>Pandas</td>
-      <td>Data processing and tabular analysis</td>
-    </tr>
-    <tr>
-      <td>Numpy</td>
-      <td>Numerical calculations</td>
-    </tr>
-    <tr>
-      <td>Scipy</td>
-      <td>Nonlinear regression and parameter estimation</td>
-    </tr>
-    <tr>
-      <td>Matplotlib</td>
-      <td>Scientific data visualization</td>
-    </tr>
-    <tr>
-      <td>Tabulate</td>
-      <td>Formatted comparison tables</td>
-    </tr>
-  </tbody>
-</table>
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/<your-username>/photosynthesis-kinetics.git
+cd photosynthesis-kinetics
+```
+
+### 2. Install dependencies
+
+```bash
+python3 -m pip install -r requirements.txt
+```
+
+### 3. Prepare the dataset
+
+The input CSV (`observations_estimated.csv`) should follow this format:
+
+```csv
+light,time_min,floating_disks
+Red,0,0
+Red,1,0
+Red,2,0
+Red,3,0
+Red,4,1
+```
+
+### 4. Run the analysis
+
+Import the functions in Python or call them from `photosynthesis.py`:
+
+```python
+from photosynthesis import get_curve, get_curves
+
+get_curve("Red")                          # fit and plot one light colour
+get_curves(["Red", "Blue", "Green"])      # compare several and export results
+```
+
+- `get_curve()` fits one light condition, plots it with the $t_{50}$ marker, and reports model statistics.
+- `get_curves()` compares multiple conditions, prints a summary table, plots all fitted curves together, and writes `photosynthesis_comparison.csv`.
 
 ## Project Structure
 
@@ -109,62 +126,35 @@ photosynthesis-kinetics/
 └── README.md
 ```
 
-The comparison CSV is generated automatically when the multi-colour analysis function runs. File names can be adjusted to match the repository.
+## Technologies
 
-## Getting Started
-### 1. Clone the repository 
-```
-git clone <your-repository-url>
-cd photosynthesis-kinetics
-```
-
-### 2. Install dependencies
-```
-python3 -m pip install pandas numpy matplotlib scipy tabulate
-```
-
-### 3. Prepare dataset
-The input CSV should follow this format:
-```
-light,time_min,floating_disks
-Red,0,0
-Red,1,0
-Red,2,0
-Red,3,0
-Red,4,1
-```
-
-### 4. Run the analysis
-The program provides two functions:
-```
-get_curve("Red")
-```
-Generates a logistic fit and calculates model statistics for one light condition
-
-```
-get_curves(["Red", "Blue", "Green"])
-```
-Compares multiple light conditions, generates a summary table, and exports the fitted parameters.
-
-Call these functions from the Python script or import them into another Python program.
-
-## Output
-
-The program generates:
-
-1. **Individual light-colour plots:** Experimental observations, fitted logistic curve, and ET50 marker.
-2. **Multi-colour comparison plots:** Fitted curves for different light conditions.
-3. **Comparison table:** Light colour, logistic rate parameter, ET50, RMSE, and R².
-4. **CSV export:** photosynthesis_comparison.csv, containing model results for further analysis.
+| Tool | Purpose |
+|------|---------|
+| Python | Primary language |
+| Pandas | Data processing and tabular analysis |
+| NumPy | Numerical calculations |
+| SciPy | Nonlinear regression and parameter estimation |
+| Matplotlib | Data visualization |
+| Tabulate | Formatted comparison tables |
 
 ## Limitations
 
-* The logistic model assumes a maximum of 12 floating disks, matching the assay setup.
-* Floating disk counts are an indirect proxy for photosynthetic activity, not direct measurements of oxygen production.
-* The fitted model assumes a sigmoidal response and may not describe every experimental condition equally well.
-* Model results depend on experimental data quality, sample size, and measurement consistency.
-* The current implementation does not estimate confidence intervals or formally test differences between light conditions.
+- The model fixes the maximum at 12 floating disks, matching the assay setup.
+- Floating disk counts are an indirect proxy for photosynthetic activity, not a direct measurement of oxygen production.
+- The model assumes a sigmoidal response and may not describe every condition equally well.
+- R² is not strictly valid for nonlinear regression, and with few time points it can overstate fit quality. Read it alongside RMSE and the plots.
+- Confidence intervals are not yet estimated and differences between light conditions are not formally tested.
+
+## Future Work
+
+- Report standard errors for $k$ and $t_{50}$ from the covariance matrix returned by `curve_fit()`
+- Add statistical tests for differences between light colours
 
 ## Project Goal
 
-This project explores how computational modelling can be used to interpret biological experiments. By combining experimental measurements with nonlinear regression and quantitative model evaluation, it aims to demonstrate how mathematical tools can help identify and compare biological response patterns.
+This project shows how computational modelling can help interpret biological experiments. Combining experimental measurements with nonlinear regression and quantitative model evaluation makes it possible to identify and compare biological response patterns.
+
+## Author
+
+[GitHub](https://github.com/jinlu-114)
+Developed for SBI4U, 2025

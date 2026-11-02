@@ -8,19 +8,19 @@ Light wavelength influences photosynthetic activity because photosynthetic pigme
 
 Using Python, experimental floating leaf disk data is fitted to a logistic growth model to estimate photosynthetic response kinetics, calculate the time required for 50% of disks to float (ET50), and compare model performance across different light conditions.
 
-## Scientific Background
+## Experimental Background
 
-The floating leaf disk assay is a common method for estimating relative photosynthetic activity. Leaf disks initially sink after air is removed from their internal spaces. During photosynthesis, oxygen accumulates within the disks, increasing their buoyancy and causing them to rise.
+This computational analysis builds upon a laboratory investigation of photosynthetic activity under different light wavelengths. The original experiment used a floating leaf disk assay to estimate relative photosynthetic activity.
 
-By recording the number of floating disks over time, we can approximate the progression of photosynthetic activity under different light conditions.
+The accompanying laboratory report provides additional context on the experimental methodology, observations, and biological interpretation.
 
-A lower ET50 generally indicates a faster photosynthetic response under the tested conditions.
+[Read the Full Lab Report](reports/photosynthesis_lab_report.pdf)
 
 ## Mathematical Model
 
 The experimental data is fitted to a logistic function:
 
-$ # N(t) = \frac{12}{1 + e^{-k(t - t_{50})}} $
+$ N(t) = \frac{12}{1 + e^{-k(t - t_{50})}} $
 
 Where:
 * N(t) — Predicted number of floating leaf disks at time t
